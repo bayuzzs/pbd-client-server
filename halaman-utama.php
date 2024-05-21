@@ -22,9 +22,8 @@ unset($_SESSION['success']);
 </head>
 
 <body>
-    <div id="myToast" class="absolute bottom-0 right-10 hidden">
-        <div class="flex w-full max-w-sm mx-auto overflow-hidden bg-white rounded-lg shadow-md  my-5
-    ">
+    <div id="myToast" class="absolute bottom-0 right-10 hidden z-[9999]">
+        <div class="flex w-full max-w-sm mx-auto overflow-hidden bg-white rounded-lg shadow-md my-5">
             <div class="flex items-center justify-center w-12 bg-blue-500">
                 <svg class="w-6 h-6 text-white fill-current" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
                     <path
@@ -34,9 +33,9 @@ unset($_SESSION['success']);
 
             <div class="px-4 py-2 -mx-3">
                 <div class="mx-3">
-                    <span class="font-semibold text-blue-500 ">Info</span>
+                    <span class="font-semibold text-blue-500 ">Inpo</span>
                     <p class="text-sm text-gray-600 ">
-                        This channel archived by the owner!
+                        Ada yang upload guys!
                     </p>
                 </div>
             </div>
@@ -80,7 +79,32 @@ unset($_SESSION['success']);
         </div>
     </div>
 
-
+    <script>
+        const myPost = document.getElementById('postingan');
+        const myToast = document.getElementById('myToast');
+        let postingan = '';
+        let postCount = 0;
+        setInterval(async () => {
+            let currentCount = await fetch('/function/get-postingan-count.php');
+            currentCount = await currentCount.text();
+            if (postCount < currentCount) {
+                postCount = currentCount
+                myToast.classList.remove('hidden');
+                myToast.classList.add('animate-bounce');
+                setTimeout(() => {
+                    myToast.classList.add('hidden');
+                    myToast.classList.remove('animate-bounce');
+                    console.log('test');
+                }, 2000)
+            }
+            let postinganBaru = await fetch('/function/get-postingan.php');
+            postinganBaru = await postinganBaru.text();
+            if (postingan !== postinganBaru) {
+                postingan = postinganBaru
+                myPost.innerHTML = postingan
+            }
+        }, 2000)
+    </script>
 </body>
 
 </html>

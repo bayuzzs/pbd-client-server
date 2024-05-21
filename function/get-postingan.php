@@ -1,7 +1,7 @@
 <?php
 include 'koneksi.php';
 
-$posts = $conn->query("SELECT * FROM post JOIN user ON (post.userId = user.userId) ORDER BY datePost DESC");
+$posts = $conn->query("SELECT * FROM post JOIN user ON (post.userId = user.userId) ORDER BY postId DESC");
 
 if ( $posts->num_rows == 0 ) {
     echo '<h1 class="text-2xl font-semibold">Belum ada post</h1>';
@@ -15,7 +15,7 @@ if ( $posts->num_rows > 0 ) {
                     class="bg-white  p-6 mb-6 shadow transition duration-100 group transform hover:shadow-lg rounded-2xl  border">
                     <div class="relative mb-4 rounded-2xl overflow-hidden  ">
                         <img class="max-h-32 rounded-2xl w-full object-cover bg-center transition-transform duration-100 transform group-hover:scale-105"
-                            src=" ' . $post['urlPoster'] . '"
+                            src="data:image/*;base64,' . base64_encode($post['image']) . '"
                             alt="">
                     </div>
                     <div class="flex justify-between items-center w-full pb-4 mb-auto">
