@@ -1,5 +1,5 @@
 <?php
-$servername = "0.tcp.ap.ngrok.io:10144";
+$servername = "localhost";
 $username   = "root";
 $password   = "";
 $dbname     = "pesbuk";
