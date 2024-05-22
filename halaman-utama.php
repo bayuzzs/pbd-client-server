@@ -1,4 +1,5 @@
 <?php
+include 'function/koneksi.php';
 session_start();
 if ( ! isset($_SESSION['user']) ) {
     header('Location: index.php');
@@ -10,6 +11,7 @@ $success = isset($_SESSION['success']) ? $_SESSION['success'] : false;
 unset($_SESSION['error']);
 unset($_SESSION['success']);
 
+$posts = $conn->query("SELECT * FROM post JOIN user ON (post.userId = user.userId) ORDER BY postId DESC");
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -22,25 +24,6 @@ unset($_SESSION['success']);
 </head>
 
 <body>
-    <div id="myToast" class="absolute bottom-0 right-10 hidden z-[9999]">
-        <div class="flex w-full max-w-sm mx-auto overflow-hidden bg-white rounded-lg shadow-md my-5">
-            <div class="flex items-center justify-center w-12 bg-blue-500">
-                <svg class="w-6 h-6 text-white fill-current" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
-                    <path
-                        d="M20 3.33331C10.8 3.33331 3.33337 10.8 3.33337 20C3.33337 29.2 10.8 36.6666 20 36.6666C29.2 36.6666 36.6667 29.2 36.6667 20C36.6667 10.8 29.2 3.33331 20 3.33331ZM21.6667 28.3333H18.3334V25H21.6667V28.3333ZM21.6667 21.6666H18.3334V11.6666H21.6667V21.6666Z" />
-                </svg>
-            </div>
-
-            <div class="px-4 py-2 -mx-3">
-                <div class="mx-3">
-                    <span class="font-semibold text-blue-500 ">Inpo</span>
-                    <p class="text-sm text-gray-600 ">
-                        Ada yang upload guys!
-                    </p>
-                </div>
-            </div>
-        </div>
-    </div>
     <!-- component -->
     <div class="min-h-screen w-full p-5">
         <div class="flex justify-between bg">
@@ -71,7 +54,40 @@ unset($_SESSION['success']);
                         class="w-12/12 mx-auto rounded-2xl bg-white p-5 bg-opacity-40 backdrop-filter backdrop-blur-lg">
                         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 text-center px-2 mx-auto"
                             id="postingan">
+                            <?php if ( $posts->num_rows == 0 ): ?>
+                                <h1 class="text-2xl font-semibold">Belum ada post</h1>
+                            <?php endif; ?>
 
+                            <?php if ( $posts->num_rows > 0 ): ?>
+                                <?php while ( $post = $posts->fetch_assoc() ): ?>
+                                    <article
+                                        class="bg-white  p-6 mb-6 shadow transition duration-100 group transform hover:shadow-lg rounded-2xl  border">
+                                        <div class="relative mb-4 rounded-2xl overflow-hidden  ">
+                                            <img class="max-h-32 rounded-2xl w-full object-cover bg-center transition-transform duration-100 transform group-hover:scale-105"
+                                                src="data:image/*;base64,<?= base64_encode($post['image']) ?>" alt="">
+                                        </div>
+                                        <div class="flex justify-between items-center w-full pb-4 mb-auto">
+                                            <div class="flex items-center">
+                                                <div class="pr-3">
+                                                    <img class="h-12 w-12 rounded-full object-cover" src="user.png" alt="">
+                                                </div>
+                                                <div class="">
+                                                    <p class="text-sm font-semibold"><?= $post['name'] ?></p>
+                                                    <p class="text-sm text-gray-500">Published on <?= $post['datePost'] ?></p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <h3 class="font-medium text-lg leading-8 text-left">
+                                            <?= $post['title'] ?>
+                                        </h3>
+                                        <p class="text-sm text-gray-500 leading-6 text-left">
+                                            <?php $post['description'] ?>
+                                        </p>
+                                        <div>
+                                        </div>
+                                    </article>
+                                <?php endwhile; ?>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
@@ -79,32 +95,7 @@ unset($_SESSION['success']);
         </div>
     </div>
 
-    <script>
-        const myPost = document.getElementById('postingan');
-        const myToast = document.getElementById('myToast');
-        let postingan = '';
-        let postCount = 0;
-        setInterval(async () => {
-            let currentCount = await fetch('/function/get-postingan-count.php');
-            currentCount = await currentCount.text();
-            if (postCount < currentCount) {
-                postCount = currentCount
-                myToast.classList.remove('hidden');
-                myToast.classList.add('animate-bounce');
-                setTimeout(() => {
-                    myToast.classList.add('hidden');
-                    myToast.classList.remove('animate-bounce');
-                    console.log('test');
-                }, 2000)
-            }
-            let postinganBaru = await fetch('/function/get-postingan.php');
-            postinganBaru = await postinganBaru.text();
-            if (postingan !== postinganBaru) {
-                postingan = postinganBaru
-                myPost.innerHTML = postingan
-            }
-        }, 2000)
-    </script>
+
 </body>
 
 </html>

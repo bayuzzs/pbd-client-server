@@ -1,6 +1,6 @@
 <?php
-$servername = "localhost";
-$port       = "3306";
+$servername = "0.tcp.ap.ngrok.io";
+$port       = "16259";
 $username   = "root";
 $password   = "";
 $dbname     = "pesbuk";
